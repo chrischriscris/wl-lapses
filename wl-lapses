@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+INTERVAL=$1
+
+re='^[0-9]+([.][0-9]+)?$'
+if ! [[ $INTERVAL =~ $re ]]; then
+    echo "Error: Interval must be a number" >&2
+    exit 1
+fi
+
+TL_DIR=$(mktemp -d)
+
+trap ctrl_c INT
+
+function ctrl_c() {
+    cur_date=$(date -u "+%Y-%m-%d %H:%M:%S")
+    ffmpeg -i "$TL_DIR/%09d.png" -c:v libx264 -crf 0 "Timelapse $cur_date.mp4"
+    exit 0
+}
+
+cur_frame=1
+while :; do
+    grim "$TL_DIR/$(printf %09d $cur_frame).png"
+    cur_frame=$((cur_frame + 1))
+    sleep 1
+done
