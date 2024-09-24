@@ -22,5 +22,5 @@ cur_frame=1
 while :; do
     grim "$TL_DIR/$(printf %09d $cur_frame).png"
     cur_frame=$((cur_frame + 1))
-    sleep 1
+    sleep "$INTERVAL"
 done
